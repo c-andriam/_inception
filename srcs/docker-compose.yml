@@ -1,0 +1,82 @@
+services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress_data:/var/www/html
+      - certs:/etc/nginx/certs
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    restart: always
+    env_file:
+      - .env
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+    restart: always
+    env_file:
+      - .env
+    secrets:
+      - source: credentials.txt
+        target: credentials.txt
+
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    volumes:
+      - wordpress_data:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+    secrets:
+      - source: db_password.txt
+        target: db_password.txt
+      - source: db_root_password.txt
+        target: db_root_password.txt
+
+volumes:
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/candriam/data/wordpress
+
+  maria_db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/candriam/data/mariadb
+
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/candriam/data/certs
+
+networks:
+  inception:
+    driver: bridge
+
+secrets:
+  credentials.txt:
+    file: ./secrets/credentials.txt
+  db_password.txt:
+    file: ./secrets/db_password.txt
+  db_root_password.txt:
+    file: ./secrets/db_root_password.txt
