@@ -32,13 +32,12 @@ RUN curl -O https://wordpress.org/latest.tar.gz \
 		&& rm -rf  wordpress latest.tar.gz \
 		&& chown -R nobody:nobody /var/www/html
 
-#RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-#    chmod +x wp-cli.phar && \
-#    mv wp-cli.phar /usr/local/bin/wp
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-#COPY ./conf/www.conf /etc/php82/php-fpm.d/www.conf
+COPY ./conf/www.conf /etc/php82/php-fpm.d/www.conf
 
-#COPY ./tools/wp-config.php /tmp/wp-config.php
 COPY ./tools/script.sh /script.sh
 
 RUN chmod +x /script.sh

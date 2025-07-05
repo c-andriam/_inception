@@ -14,7 +14,7 @@ status :
 
 clean : down
 	@docker system prune -af
-	@docker volume rm -f srcs_wordpress_data srcs_mariadb_data srcs_certs || true
+	@docker volume rm -f wordpress_data mariadb_data certs || true
 	@sudo rm -rf /home/candriam/data
 
 fclean : clean
